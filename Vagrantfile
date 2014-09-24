@@ -6,8 +6,33 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "hashicorp/precise64"
+  config.vm.define "mq-1" do |v|
+    v.vm.box = "hashicorp/precise64"
+    v.vm.hostname = "boundary-rabbit-mq-01"
+    v.vm.provision :puppet
+    v.vm.network "forwarded_port", guest: 15672, host: 18672
+    v.vm.network "private_network", ip: "192.168.33.11"
+    v.vm.post_up_message = "boundary-rabbitmq-01 is UP"
+  end
+
+  config.vm.define "mq-2" do |v|
+    v.vm.box = "hashicorp/precise64"
+    v.vm.hostname = "boundary-rabbit-mq-02"
+    v.vm.provision :puppet
+    v.vm.network "forwarded_port", guest: 15672, host: 28672
+    v.vm.network "private_network", ip: "192.168.33.12"
+    v.vm.post_up_message = "boundary-rabbitmq-02 is UP"
+  end
+
+  config.vm.define "mq-3" do |v|
+    v.vm.box = "hashicorp/precise64"
+    v.vm.hostname = "boundary-rabbit-mq-03"
+    v.vm.provision :puppet
+    v.vm.network "forwarded_port", guest: 15672, host: 38672
+    v.vm.network "private_network", ip: "192.168.33.13"
+    v.vm.post_up_message = "boundary-rabbitmq-03 is UP"
+  end
+
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -18,7 +43,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 15672, host: 8672
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -79,7 +103,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   puppet.manifests_path = "manifests"
   #   puppet.manifest_file  = "site.pp"
   # end
-  config.vm.provision :puppet
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding

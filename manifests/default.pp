@@ -1,32 +1,31 @@
+# Update to the latest software
 exec { "apt-get update":
   path => "/usr/bin",
 }
+
+# Install RabbitMQ
 package { "rabbitmq-server":
   ensure  => present,
   require => Exec["apt-get update"],
 }
+
+# Start the RabbitMQ service
 service { "rabbitmq-server":
   ensure  => "running",
   require => Package["rabbitmq-server"],
 }
-package { "openjdk-7-jre-headless":
-  ensure  => present,
-  require => Exec["apt-get update"],
+
+# Cluster Support
+#
+# Set up /etc/hosts so that all servers can communicate
+#
+host { 'boundary-rabbitmq-01':
+    ip => '192.168.33.11',
 }
-package { "openjdk-7-jdk":
-  ensure  => present,
-  require => Exec["apt-get update"],
+host { 'boundary-rabbitmq-02':
+    ip => '192.168.33.11',
 }
-package { "maven2":
-  ensure => present,
-  require => Exec["apt-get update"],
+host { 'boundary-rabbitmq-03':
+    ip => '192.168.33.11',
 }
 
-#file { "/var/www/sample-webapp":
-#  ensure  => "link",
-#  target  => "/vagrant/sample-webapp",
-#  require => Package["apache2"],
-#  notify  => Service["apache2"],
-#}
-#$ git add manifests/default.pp
-#$ git commit -m "Basic Puppet manifest"
