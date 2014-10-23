@@ -6,31 +6,31 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.define "mq-1" do |v|
+  config.vm.define "rabbit1" do |v|
     v.vm.box = "hashicorp/precise64"
-    v.vm.hostname = "boundary-rabbit-mq-01"
+    v.vm.box_url = "https://vagrantcloud.com/hashicorp/boxes/precise64"
+    v.vm.hostname = "rabbit1"
     v.vm.provision :puppet
     v.vm.network "forwarded_port", guest: 15672, host: 18672
     v.vm.network "private_network", ip: "192.168.33.11"
-    v.vm.post_up_message = "boundary-rabbitmq-01 is UP"
   end
 
-  config.vm.define "mq-2" do |v|
+  config.vm.define "rabbit2" do |v|
     v.vm.box = "hashicorp/precise64"
-    v.vm.hostname = "boundary-rabbit-mq-02"
+    v.vm.box_url = "https://vagrantcloud.com/hashicorp/boxes/precise64"
+    v.vm.hostname = "rabbit2"
     v.vm.provision :puppet
     v.vm.network "forwarded_port", guest: 15672, host: 28672
     v.vm.network "private_network", ip: "192.168.33.12"
-    v.vm.post_up_message = "boundary-rabbitmq-02 is UP"
   end
 
-  config.vm.define "mq-3" do |v|
+  config.vm.define "rabbit3" do |v|
     v.vm.box = "hashicorp/precise64"
-    v.vm.hostname = "boundary-rabbit-mq-03"
+    v.vm.box_url = "https://vagrantcloud.com/hashicorp/boxes/precise64"
+    v.vm.hostname = "rabbit3"
     v.vm.provision :puppet
     v.vm.network "forwarded_port", guest: 15672, host: 38672
     v.vm.network "private_network", ip: "192.168.33.13"
-    v.vm.post_up_message = "boundary-rabbitmq-03 is UP"
   end
 
 
