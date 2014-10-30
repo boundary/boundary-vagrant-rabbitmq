@@ -11,7 +11,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.vm.box_url = "https://vagrantcloud.com/hashicorp/boxes/precise64"
     v.vm.hostname = "rabbitmq"
     v.vm.provision :puppet
-    v.vm.network "forwarded_port", guest: 15672, host: 18672
+#    v.vm.network "forwarded_port", guest: 15672, host: 15672
+    v.vm.network "forwarded_port", guest: 5672, host: 5672 
+    v.vm.network "forwarded_port", guest: 55672, host: 55672 
   end
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
