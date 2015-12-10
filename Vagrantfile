@@ -6,24 +6,59 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.define "rabbitmq" do |v|
-    v.vm.box = "hashicorp/precise64"
-    v.vm.box_url = "https://vagrantcloud.com/hashicorp/boxes/precise64"
-    v.vm.hostname = "rabbitmq"
-    v.vm.provision :puppet
-#    v.vm.network "forwarded_port", guest: 15672, host: 15672
-    v.vm.network "forwarded_port", guest: 5672, host: 5672 
-    v.vm.network "forwarded_port", guest: 55672, host: 55672 
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
   end
 
-  # Enable provisioning with Puppet stand alone.  Puppet manifests
-  # are contained in a directory path relative to this Vagrantfile.
-  # You will need to create the manifests directory and a manifest in
-  # the file default.pp in the manifests_path directory.
+  #
+  # Centos
+  #
+  config.vm.define "centos-6.6", autostart: false do |v|
+     v.vm.box = "puppetlabs/centos-6.6-64-puppet"
+     v.vm.hostname = "centos-6-6"
+  end
+
+  config.vm.define "centos-7.0", autostart: false do |v|
+     v.vm.box = "puppetlabs/centos-7.0-64-puppet"
+     v.vm.hostname = "centos-7-0"
+  end
+
+  #
+  # Ubuntu
+  #
+  config.vm.define "ubuntu-12.04", autostart: false do |v|
+     v.vm.box = "puppetlabs/ubuntu-12.04-64-puppet"
+     v.vm.hostname = "ubuntu-12-04"
+  end
+  
+  config.vm.define "ubuntu-14.04", autostart: false do |v|
+      v.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
+      v.vm.hostname = "ubuntu-14-04"
+  end
+
+  #
+  # Add the required puppet modules before provisioning is run by puppet
+  #
+  config.vm.provision :shell do |shell|
+      shell.inline = "puppet module install puppetlabs-stdlib;
+                      puppet module install puppetlabs-apt;
+                      puppet module install nanliu/staging;
+                      puppet module install puppetlabs-rabbitmq;
+                      puppet module install boundary-boundary;
+                      exit 0"
+ end
+
+  #
+  # Use Puppet to provision the server
   #
   config.vm.provision "puppet" do |puppet|
-    puppet.manifests_path = "manifests"
-    puppet.manifest_file  = "default.pp"
+     puppet.manifests_path = "manifests"
+     puppet.manifest_file  = "site.pp"
+     puppet.facter = {
+         "api_token" => ENV["API_TOKEN"]
+     }
   end
+  #
 
 end
